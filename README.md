@@ -1,6 +1,6 @@
 # Tela_do_Sistema
 
-#Foto da tala parcialmente
+#Foto parcial da tala de login e  Cadastro 
 
 
 
