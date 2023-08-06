@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import { Types } from "../Context/Typess/types";
 
 export const handlClick = ({ dispatch }) => {
@@ -11,7 +14,6 @@ export const handlClick = ({ dispatch }) => {
     Types.enableTrueAndFalse = true;
   }
 };
-
 export const handlClick1 = ({ dispatch }) => {
   if (Types.enableTrueAndFalse1) {
     dispatch({ type: Types.enableTrue1 });

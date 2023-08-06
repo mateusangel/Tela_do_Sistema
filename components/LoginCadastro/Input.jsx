@@ -1,5 +1,6 @@
+import { memo } from "react";
 // eslint-disable-next-line react/prop-types
-export function Input({ type, placeholder, name, value, onChange }) {
+function Input({ type, placeholder, name, value, onChange, ref }) {
   return (
     <>
       <input
@@ -8,7 +9,10 @@ export function Input({ type, placeholder, name, value, onChange }) {
         type={type}
         name={name}
         placeholder={placeholder}
+        ref={ref}
       />
     </>
   );
 }
+
+export default memo(Input);

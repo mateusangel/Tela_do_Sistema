@@ -1,34 +1,33 @@
 import { Btn } from "../components/LoginCadastro/Btn";
 import { DivBtn } from "../components/LoginCadastro/DivBtn";
 import { H1 } from "../components/LoginCadastro/H1";
-import { Input } from "../components/LoginCadastro/Input";
+import Input from "../components/LoginCadastro/Input";
 import { LoginCardd } from "../components/LoginCadastro/LoginCard";
 import { P } from "../components/LoginCadastro/P";
 import GlobalStyled from "../styles/GlobalStyled";
-import Logo from "../src/assets/Vector.png";
 import { DivStyled } from "../styles/DivCadastro/DivStyled";
-import { useContext, useEffect, useState } from "react";
-import { Context } from "../Context/Context";
-import { Eye } from "../components/eyen/Eye";
-import { handlClick1 } from "../func/HandleClick";
-import { FiEyeOff } from "react-icons/fi";
-import { Types } from "../Context/Typess/types";
-import { Form } from "../components/FormCadastro/Form";
-import { Chamada } from "../services/Chamada";
+import { useContext, useState } from "react";
+import { Context, ContextUserRegiter } from "../Context/Context";
 
-const Api = new Chamada();
+import { Form } from "../components/FormCadastro/Form";
+// import { Chamada } from "../services/Chamada";
+import { BtnSendd } from "../components/LoginCadastro/BtnSend";
+import { FlashMessage } from "../hooks/useFlashMessage";
+import { TimeShowMessage } from "../hooks/Time";
+import { Kalogo } from "../components/Logo/Logo";
+import { navegacao } from "../func/navegacao";
+import { useNavigate } from "react-router-dom";
 
 export function Cadastro() {
-  const { state, dispatch } = useContext(Context);
+  // const Api = new Chamada();
+  const { state } = useContext(Context);
+  const { AdmRegister } = useContext(ContextUserRegiter);
   const [enter, setenter] = useState([]);
-
-  useEffect(() => {
-    return () => {
-      Types.enableTrueAndFalse1 = false;
-      console.log(Types.enableTrueAndFalse1);
-      state.typePassord1 = "password";
-    };
-  }, [Types.enableTrueAndFalse1]);
+  const [msg, setmsg] = useState("");
+  const [tipo, settipo] = useState(" ");
+  const navi = useNavigate();
+  // Custom Hook
+  const [showMessage, start] = TimeShowMessage(false, 3000);
 
   const handlechange = (e) => {
     setenter({
@@ -36,23 +35,38 @@ export function Cadastro() {
       [e.target.name]: e.target.value,
     });
   };
-
   const handlesubmit = async (event) => {
+    console.log(AdmRegister);
     event.preventDefault();
     try {
-      const { result } = await Api.Cadastro(enter);
-
-      console.log(result);
-    } catch (er) {
-      console.log(er);
+      const response = await AdmRegister(enter);
+      console.log(response.token);
+      setmsg(response.message);
+      settipo("green");
+      start();
+      navegacao(navi);
+      return response;
+    } catch (err) {
+      if (err.response.data.message) {
+        setmsg(err.response.data.message);
+        settipo("red");
+        start();
+        return;
+      } else {
+        setmsg(err.response.data.message);
+        settipo("red");
+        start();
+        return;
+      }
     }
   };
 
   return (
     <>
+      {showMessage && <FlashMessage msg={msg} type={tipo} />}
       <GlobalStyled />
       <LoginCardd>
-        <img src={Logo} alt="logo  da aplicação" />
+        <Kalogo />
         <DivStyled>
           <H1>Cadastro</H1>
           <Form onSubmit={handlesubmit}>
@@ -60,44 +74,33 @@ export function Cadastro() {
             <Input
               type={state.typeYourName}
               placeholder={state.typeEnterYourName}
-              name={"useradm"}
+              name={"name"}
               onChange={handlechange}
             />
             <P>E-mail:</P>
             <Input
               type={state.typeEmail}
               placeholder={state.typeEnterYourEmail}
-              name={"emailadm"}
+              name={"email"}
               onChange={handlechange}
             />
             <P>Senha:</P>
             <Input
               type={state.typePassord1}
               placeholder={state.typeEnterYourPassoword}
-              name={"passowordadm"}
+              name={"password"}
               onChange={handlechange}
             />
-            {Types.enableTrueAndFalse1 ? (
-              <FiEyeOff
-                onClick={() => handlClick1({ dispatch })}
-                className={"eye1"}
-              />
-            ) : (
-              <Eye
-                onClick={() => handlClick1({ dispatch })}
-                className={"eye1"}
-              />
-            )}
             <P>Repita sua Senha:</P>
             <Input
               type={state.typePassord1}
               placeholder={state.typeRepeatYourPassword}
-              name={"passowordadmrepet"}
+              name={"confirmpassword"}
               onChange={handlechange}
             />
             <DivBtn>
-              <Btn rota={"/Cadastro"}> Salvar</Btn>
-              <Btn rota={"/"}>Voltar</Btn>
+              <BtnSendd />
+              <Btn rota={"/"} />
             </DivBtn>
           </Form>
         </DivStyled>
